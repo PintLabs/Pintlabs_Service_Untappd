@@ -224,6 +224,51 @@ class Awsm_Service_Untappd
         return $this->_request('thepub', $args);
     }
     
+    public function venueInfo()
+    {
+        $args = array(
+        
+        );
+        
+        return $this->_request('venue_info', $args);
+    }
+    
+    public function breweryInfo()
+    {
+        $args = array(
+        
+        );
+        
+        return $this->_request('brewery_info', $args);
+    }
+
+    public function breweryCheckins()
+    {
+        $args = array(
+        
+        );
+        
+        return $this->_request('brewery_checkins', $args);
+    }
+
+    public function beerCheckins()
+    {
+        $args = array(
+        
+        );
+        
+        return $this->_request('beer_checkins', $args);
+    }    
+    
+    public function venueCheckins()
+    {
+        $args = array(
+        
+        );
+        
+        return $this->_request('venue_checkins', $args);
+    }    
+    
     /**
      * Get's the details of a specific checkin
      * 
@@ -248,7 +293,7 @@ class Awsm_Service_Untappd
      * 
      * @return stdClass object
      */
-    protected function _request($method, $args)
+    protected function _request($method, $args, $authenticated = true)
     {
         $this->_lastRequestUri = null;
         $this->_lastRawResponse = null;
@@ -269,7 +314,11 @@ class Awsm_Service_Untappd
         // Set curl options and execute the request
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->_lastRequestUri);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->_upHash);  
+        
+        if ($authenticated) {
+            curl_setopt($ch, CURLOPT_USERPWD, $this->_upHash);
+        }
+          
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
