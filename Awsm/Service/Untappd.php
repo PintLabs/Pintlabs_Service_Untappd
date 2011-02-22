@@ -224,51 +224,6 @@ class Awsm_Service_Untappd
         return $this->_request('thepub', $args);
     }
     
-    public function venueInfo()
-    {
-        $args = array(
-        
-        );
-        
-        return $this->_request('venue_info', $args);
-    }
-    
-    public function breweryInfo()
-    {
-        $args = array(
-        
-        );
-        
-        return $this->_request('brewery_info', $args);
-    }
-
-    public function breweryCheckins()
-    {
-        $args = array(
-        
-        );
-        
-        return $this->_request('brewery_checkins', $args);
-    }
-
-    public function beerCheckins()
-    {
-        $args = array(
-        
-        );
-        
-        return $this->_request('beer_checkins', $args);
-    }    
-    
-    public function venueCheckins()
-    {
-        $args = array(
-        
-        );
-        
-        return $this->_request('venue_checkins', $args);
-    }    
-    
     /**
      * Gets the details of a specific checkin
      * 
