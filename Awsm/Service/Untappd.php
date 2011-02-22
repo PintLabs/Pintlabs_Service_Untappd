@@ -191,7 +191,7 @@ class Awsm_Service_Untappd
     }
     
     /**
-     * Searchs Untappd's database to find beers matching the query string
+     * Searches Untappd's database to find beers matching the query string
      * 
      * @param string $searchString query string to search
      */
@@ -205,20 +205,20 @@ class Awsm_Service_Untappd
     }
     
     /**
-     * Get's the public feed of checkings, also known as "the pub"
+     * Gets the public feed of checkings, also known as "the pub"
      * 
      *@ param int $since numeric ID of the latest checkin
      * @param int $offset offset within the dataset to move to
-     * @param float $longitude longitude to filter public feed
-     * @param float $latitude latitude to filter public feed
+     * @param float $geolng longitude to filter public feed
+     * @param float $geolat latitude to filter public feed
      */
     public function publicFeed($since = '', $offset = '', $longitude = '', $latitude = '')
     {
         $args = array(
-            'since'     => $since, 
-            'offset'    => $offset, 
-            'longitude' => $longitude, 
-            'latitude'  => $latitude
+            'since'  => $since, 
+            'offset' => $offset, 
+            'geolng' => $longitude,
+            'geolat' => $latitude
         );
         
         return $this->_request('thepub', $args);
@@ -270,7 +270,7 @@ class Awsm_Service_Untappd
     }    
     
     /**
-     * Get's the details of a specific checkin
+     * Gets the details of a specific checkin
      * 
      * @param int $checkinId Untappd checkin ID
      */
