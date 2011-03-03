@@ -1,11 +1,12 @@
-PHP library to interact with the public Untappd API version 2, patterned
+PHP library to interact with the public Untappd API version 3, patterned
 after other service libraries in Zend Framework.
 
 Information on the API can be found on Untappd's website.
 http://untappd.com/api/dashboard
 
-An API Key is required, along with an Untappd username and password.  Contact
-Untappd to attain your api key.
+An API Key is required.  An Untappd username and password are required for
+certain method calls, such as myFriendFeed.  Contact Untappd to attain your
+api key.
 
 ==============================================
 
@@ -18,7 +19,7 @@ $apiKey   = 'your-api-key';
 $username = 'your-username';
 $password = 'your-password';
         
-$untappd = new Awsm_Service_Untappd($username, $password, $apiKey);
+$untappd = new Awsm_Service_Untappd($apiKey, $username, $password);
         
 try {
     $result = $untappd->myFriendFeed();
