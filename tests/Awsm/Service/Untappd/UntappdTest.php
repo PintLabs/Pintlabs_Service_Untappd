@@ -10,7 +10,6 @@ class Awsm_Service_Untappd_UntappdTest extends PHPUnit_Framework_TestCase
     public function testInit()
     {
         $untappd = new Awsm_Service_Untappd(self::APIKEY);
-
     }
 
 }

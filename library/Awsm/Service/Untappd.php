@@ -1,4 +1,4 @@
-<?php
+ <?php
 /**
  * Provides a service into the Untappd public API.
  * 
@@ -103,6 +103,8 @@ class Awsm_Service_Untappd
      * Gets a user's info
      * 
      * @param string *optional* $username Untappd username
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userInfo($username = '')
     {
@@ -124,6 +126,8 @@ class Awsm_Service_Untappd
      * @param string *optional* $username Untappd username
      * @param int *optional* $since numeric ID of the latest checkin
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userFeed($username = '', $since = '', $offset = '')
     {
@@ -146,6 +150,8 @@ class Awsm_Service_Untappd
      * 
      * @param string *optional* $username Untappd username
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userDistinctBeers($username = '', $offset = '')
     {
@@ -167,6 +173,8 @@ class Awsm_Service_Untappd
      * 
      * @param string *optional* $username Untappd username
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userFriends($username = '', $offset = '')
     {
@@ -188,6 +196,8 @@ class Awsm_Service_Untappd
      * 
      * @param string *optional* $username Untappd username
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userWishlist($username = '', $offset = '')
     {
@@ -210,6 +220,8 @@ class Awsm_Service_Untappd
      * 
      * @param string *optional* $username Untappd username
      * @param (all|beer|venue|special) *optional* $sort order to sort the badges in
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function userBadge($username = '', $sort = 'all')
     {
@@ -236,6 +248,8 @@ class Awsm_Service_Untappd
      * Gets a beer's critical info
      * 
      * @param int $beerId Untappd beer ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function beerInfo($beerId)
     {
@@ -255,6 +269,8 @@ class Awsm_Service_Untappd
      * Searches Untappd's database to find beers matching the query string
      * 
      * @param string $searchString query string to search
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function beerSearch($searchString)
     {
@@ -276,6 +292,8 @@ class Awsm_Service_Untappd
      * @param int $beerId Untappd ID of the beer to search for
      * @param int *optional* $since numeric ID of the latest checkin
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function beerFeed($beerId, $since = '', $offset = '')
     {
@@ -297,6 +315,8 @@ class Awsm_Service_Untappd
      * Gets information about a given venue
      * 
      * @param int $venueId Untappd ID of the venue
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function venueInfo($venueId)
     {
@@ -318,6 +338,8 @@ class Awsm_Service_Untappd
      * @param int $venueId Untappd ID of the venue
      * @param int *optional* $since numeric ID of the latest checkin
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function venueFeed($venueId, $since = '', $offset = '')
     {
@@ -341,6 +363,8 @@ class Awsm_Service_Untappd
      * @param int $breweryId Untappd ID of the brewery
      * @param int *optional* $since numeric ID of the latest checkin
      * @param int *optional* $offset offset within the dataset to move to
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function breweryFeed($breweryId, $since = '', $offset = '')
     {
@@ -386,6 +410,8 @@ class Awsm_Service_Untappd
      * @param (daily|weekly|monthly) *optional* $age Age of checkins to consider
      * @param float *optional* $latitude Numeric latitude to filter the feed
      * @param float *optional* $longitude Numeric longitude to filter the feed
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function publicTrending($type = 'all', $limit = 10, $age = 'daily', $latitude = '', $longitude = '')
     {
@@ -421,6 +447,8 @@ class Awsm_Service_Untappd
      * Gets the details of a specific checkin
      * 
      * @param int $checkinId Untappd checkin ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
      */
     public function checkinInfo($checkinId)
     {
@@ -436,53 +464,144 @@ class Awsm_Service_Untappd
         return $this->_request('details', $args);
     }
     
-    // Waiting for validation from untappd on arguments and details for write API
-    /*
-    public function checkin()
+    /**
+     * Perform a live checkin
+     *
+     * @param int $gmtOffset - Hours the user is away from GMT
+     * @param int $beerId - Untappd beer ID
+     * @param string *optional* $foursquareId - MD5 hash ID of the venue to check into
+     * @param float *optional* $userLat - Latitude of the user.  Required if you add a location.
+     * @param float *optional* $userLong - Longitude of the user.  Required if you add a location.
+     * @param string *optional* $shout - Text to include as a comment
+     * @param boolean *optional* $facebook - Whether or not to post to facebook
+     * @param boolean *optional* $twitter - Whether or not to post to twitter
+     * @param boolean *optional* $foursquare - Whether or not to checkin on foursquare
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function checkin($gmtOffset, $beerId, $foursquareId = '', $userLat = '', $userLong = '', $shout = '', $facebook = false, $twitter = false, $foursquare = false)
     {
+        if (empty($gmtOffset)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('gmtOffset parameter must be set and not empty');
+        }
+
+        if (empty($beerId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('beerId parameter must be set and not empty');
+        }
+
+        // If $foursquareId is set, must past Lat and Long to the API
+        if (!empty($foursquareId) && (empty($userLat) || empty($userLong))) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('userLat and userLong parameters required since foursquareId is set');
+        }
+
         $args = array(
-            
+            'gmt_offset'    => $gmtOffset,
+            'bid'           => $beerId,
+            'foursquare_id' => $foursquareId,
+            'user_lat'      => $userLat,
+            'user_long'     => $userLong,
+            'shout'         => $shout,
+            'facebook'      => ($facebook) ? 'on' : 'off',
+            'twitter'       => ($twitter) ? 'on' : 'off',
+            'foursquare'    => ($foursquare) ? 'on' : 'off',
         );
         
-        return $this->_request('', $args);          
+        return $this->_request('checkin', $args, true);
     }
-    
-    public function checkinComment()
+
+    /**
+     * Adds a comment to a specific checkin
+     *
+     * @param int $checkinId - Checkin to comment on
+     * @param string $comment - Comment to add to the checkin
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function checkinComment($checkinId, $comment)
     {
+        if (empty($checkinId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('checkinId parameter must be set and not empty');
+        }
+
+        if (empty($comment)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('comment parameter must be set and not empty');
+        }
+
         $args = array(
-            
+            'checkin_id' => $checkinId,
+            'comment'    => $comment,
         );
         
-        return $this->_request('', $args);          
+        return $this->_request('add_comment', $args, true);
     }
-    
-    public function checkinRemoveComment()
+
+    /**
+     * Remove a comment from a checkin
+     *
+     * @param int $commentId
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function checkinRemoveComment($commentId)
     {
+        if (empty($commentId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('commentId parameter must be set and not empty');
+        }
+
         $args = array(
-            
+            'comment_id' => $commentId,
         );
         
-        return $this->_request('', $args);          
+        return $this->_request('delete_comment', $args, true);
     }
-    
-    public function checkinToast()
+
+    /**
+     * Toast a checkin
+     *
+     * @param int $checkinId
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function checkinToast($checkinId)
     {
+        if (empty($commentId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('commentId parameter must be set and not empty');
+        }
+
         $args = array(
-            
+            'comment_id' => $commentId,
         );
         
-        return $this->_request('', $args);          
+        return $this->_request('toast', $args, true);
     }
-    
-    public function checkinRemoveToast()
+
+    /**
+     * Remove a toast from a checkin
+     *
+     * @param int $commentId
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function checkinRemoveToast($commentId)
     {
+        if (empty($commentId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('commentId parameter must be set and not empty');
+        }
+
         $args = array(
-            
+            'comment_id' => $commentId,
         );
-        
-        return $this->_request('', $args);          
+
+        return $this->_request('delete_toast', $args, true);
     }
-    */
     
     /**
      * Sends a request using curl to the required URI
