@@ -404,18 +404,27 @@ class Awsm_Service_Untappd
      * Searches Untappd's database to find beers matching the query string
      * 
      * @param string $searchString query string to search
+     * @param int *optional* $offset offset within the dataset to move to
+     * @param (name|count|*empty*) *optional* flag to sort the results
      *
      * @throws Awsm_Service_Untappd_Exception
      */
-    public function beerSearch($searchString)
+    public function beerSearch($searchString, $offset = '', $sort = '')
     {
         if (empty($searchString)) {
             require_once 'Awsm/Service/Untappd/Exception.php';
             throw new Awsm_Service_Untappd_Exception('searchString parameter must be set and not empty');            
         }
+
+        if (!empty($sort) && ($sort != 'count' && $sort != 'name')) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('If set, sort can only be "count" or "name"');
+        }
                 
         $args = array(
-            'q' => $searchString
+            'q'      => $searchString,
+            'offset' => $offset,
+            'sort'   => $sort
         );
         
         return $this->_request('beer_search', $args);
@@ -566,14 +575,16 @@ class Awsm_Service_Untappd
      * @param int *optional* $offset offset within the dataset to move to
      * @param float *optional* $longitude longitude to filter public feed
      * @param float *optional* $latitude latitude to filter public feed
+     * @param int *optional* $radius radius from the lat and long to filter feed
      */
-    public function publicFeed($since = '', $offset = '', $longitude = '', $latitude = '')
+    public function publicFeed($since = '', $offset = '', $longitude = '', $latitude = '', $radius = '')
     {
         $args = array(
             'since'  => $since, 
             'offset' => $offset, 
             'geolng' => $longitude,
-            'geolat' => $latitude
+            'geolat' => $latitude,
+            'radius' => $radius
         );
         
         return $this->_request('thepub', $args);
@@ -587,10 +598,11 @@ class Awsm_Service_Untappd
      * @param (daily|weekly|monthly) *optional* $age Age of checkins to consider
      * @param float *optional* $latitude Numeric latitude to filter the feed
      * @param float *optional* $longitude Numeric longitude to filter the feed
+     * @param int *optional* $radius Radius in miles from the long/lat points
      *
      * @throws Awsm_Service_Untappd_Exception
      */
-    public function publicTrending($type = 'all', $limit = 10, $age = 'daily', $latitude = '', $longitude = '')
+    public function publicTrending($type = 'all', $limit = 10, $age = 'daily', $latitude = '', $longitude = '', $radius = '')
     {
         $validTypes = array('all', 'macro', 'micro', 'local');
         if (!in_array($type, $validTypes)) {
@@ -615,6 +627,7 @@ class Awsm_Service_Untappd
             'age'    => $age,
             'geolat' => $latitude,
             'geolng' => $longitude,
+            'radius' => $radius
         );
         
         return $this->_request('trending', $args);        
@@ -653,10 +666,11 @@ class Awsm_Service_Untappd
      * @param boolean *optional* $facebook - Whether or not to post to facebook
      * @param boolean *optional* $twitter - Whether or not to post to twitter
      * @param boolean *optional* $foursquare - Whether or not to checkin on foursquare
+     * @param int *optional* $rating - Rating for the beer
      *
      * @throws Awsm_Service_Untappd_Exception
      */
-    public function checkin($gmtOffset, $beerId, $foursquareId = '', $userLat = '', $userLong = '', $shout = '', $facebook = false, $twitter = false, $foursquare = false)
+    public function checkin($gmtOffset, $beerId, $foursquareId = '', $userLat = '', $userLong = '', $shout = '', $facebook = false, $twitter = false, $foursquare = false, $rating = '')
     {
         if (empty($gmtOffset)) {
             require_once 'Awsm/Service/Untappd/Exception.php';
@@ -674,6 +688,11 @@ class Awsm_Service_Untappd
             throw new Awsm_Service_Untappd_Exception('userLat and userLong parameters required since foursquareId is set');
         }
 
+        if (!empty($rating) && (!is_int($rating) || $rating < 1 || $rating > 5)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('If set, rating must be an integer between 1 and 5');
+        }
+
         $args = array(
             'gmt_offset'    => $gmtOffset,
             'bid'           => $beerId,
@@ -684,6 +703,7 @@ class Awsm_Service_Untappd
             'facebook'      => ($facebook) ? 'on' : 'off',
             'twitter'       => ($twitter) ? 'on' : 'off',
             'foursquare'    => ($foursquare) ? 'on' : 'off',
+            'rating_value'  => $rating
         );
         
         return $this->_request('checkin', $args, true);
