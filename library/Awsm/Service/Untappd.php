@@ -98,7 +98,142 @@ class Awsm_Service_Untappd
         
         return $this->_request('feed', $args, true);
     }
-        
+
+    /**
+     * Adds a beer to the logged-in-user's wishlist
+     *
+     * @param int $beerId Untappd beer ID to add
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function addToMyWishlist($beerId)
+    {
+        if (empty($beerId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('beerId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'bid' => $beerId
+        );
+
+        return $this->_request('add_to_wish', $args, true);
+    }
+
+    /**
+     * Removes a beer from the logged-in-user's wishlist
+     *
+     * @param int $beerId Untappd beer ID to remove
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function removeFromMyWishlist($beerId)
+    {
+        if (empty($beerId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('beerId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'bid' => $beerId
+        );
+
+        return $this->_request('remove_from_wish', $args, true);
+    }
+
+    /**
+     * Lists any pending requests to become friends
+     *
+     */
+    public function myPendingFriends()
+    {
+        $args = array();
+
+        return $this->_request('friend_pending', $args, true);
+    }
+
+    /**
+     * Accepts a friend request from the user for the logged-in-user
+     *
+     * @param string $requestingUserId Untappd user ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function acceptMyFriendRequest($requestingUserId)
+    {
+        if (empty($requestingUserId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('requestingUserId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'target_id' => $requestingUserId
+        );
+
+        return $this->_request('friend_accept', $args, true);
+    }
+
+    /**
+     * Rejects a friend request from the user for the logged-in-user
+     *
+     * @param string $requestingUserId Untappd user ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function rejectMyFriendRequest($requestingUserId)
+    {
+        if (empty($requestingUserId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('requestingUserId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'target_id' => $requestingUserId
+        );
+
+        return $this->_request('friend_reject', $args, true);
+    }
+
+    /**
+     * Un-friends a user from the logged-in-user
+     *
+     * @param string $friendUserId Untappd user ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function removeMyFriend($friendUserId)
+    {
+        if (empty($friendUserId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('friendUserId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'target_id' => $friendUserId
+        );
+
+        return $this->_request('friend_revoke', $args, true);
+    }
+
+    /**
+     * Makes a friend requets from the logged-in-user to the user passed
+     *
+     * @param string $userId Untappd user ID
+     */
+    public function makeMyFriendRequest($userId)
+    {
+        if (empty($userId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('userId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'target_id' => $userId
+        );
+
+        return $this->_request('friend_request', $args, true);
+    }
+
     /**
      * Gets a user's info
      * 
@@ -380,6 +515,48 @@ class Awsm_Service_Untappd
         );
         
         return $this->_request('brewery_checkins', $args);          
+    }
+
+    /**
+     * Gets the basic info for a brewery
+     *
+     * @param int $breweryId Untappd brewery ID
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function breweryInfo($breweryId)
+    {
+        if (empty($breweryId)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('breweryId parameter must be set and not empty');
+        }
+
+        $args = array(
+            'brewery_id' => $breweryId
+        );
+
+        return $this->_request('brewery_info', $args);
+    }
+
+    /**
+     * Searches for all the breweries based on a query string
+     *
+     * @param string $searchString search term to search breweries
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     */
+    public function brewerySearch($searchString)
+    {
+        if (empty($searchString)) {
+            require_once 'Awsm/Service/Untappd/Exception.php';
+            throw new Awsm_Service_Untappd_Exception('searchString parameter must be set and not empty');
+        }
+
+        $args = array(
+            'q' => $query
+        );
+
+        return $this->_request('brewery_search', $args, true);
     }
     
     /**
