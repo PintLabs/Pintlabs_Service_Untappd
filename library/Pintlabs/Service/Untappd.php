@@ -615,24 +615,17 @@ class Pintlabs_Service_Untappd
     }
 
     /**
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
-     *
      *
      * Gets the trending list of beers based on location
      *
      * @param (all|macro|micro|local) *optional* $type Type of beers to search for
-     * @param int *optional* $limit Number of results to return
-     * @param (daily|weekly|monthly) *optional* $age Age of checkins to consider
      * @param float *optional* $latitude Numeric latitude to filter the feed
      * @param float *optional* $longitude Numeric longitude to filter the feed
      * @param int *optional* $radius Radius in miles from the long/lat points
      *
      * @throws Pintlabs_Service_Untappd_Exception
      */
-    public function publicTrending($type = 'all', $limit = 10, $age = 'daily', $latitude = '', $longitude = '', $radius = '')
+    public function publicTrending($type = 'all', $latitude = '', $longitude = '', $radius = '')
     {
         $validTypes = array('all', 'macro', 'micro', 'local');
         if (!in_array($type, $validTypes)) {
@@ -640,23 +633,10 @@ class Pintlabs_Service_Untappd
             throw new Pintlabs_Service_Untappd_Exception('Type parameter must be one of the following: ' . implode(', ', $validTypes));
         }
 
-        $validAges = array('daily', 'weekly', 'monthly');
-        if (!in_array($age, $validAges)) {
-            require_once 'Pintlabs/Service/Untappd/Exception.php';
-            throw new Pintlabs_Service_Untappd_Exception('Age parameter must be one of the following: ' . implode(', ', $validAges));
-        }
-
-        // Set limit to default if it is outside of the available params
-        if ($limit > 10 || $limit < 1) {
-            $limit = 10;
-        }
-
         $args = array(
             'type'   => $type,
-            'limit'  => $limit,
-            'age'    => $age,
-            'geolat' => $latitude,
-            'geolng' => $longitude,
+            'lat'    => $latitude,
+            'lng'    => $longitude,
             'radius' => $radius
         );
 
