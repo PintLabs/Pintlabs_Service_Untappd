@@ -640,7 +640,7 @@ class Pintlabs_Service_Untappd
             'radius' => $radius
         );
 
-        return $this->_request('trending', $args);
+        return $this->_request('beer/trending', $args);
     }
 
     /**
