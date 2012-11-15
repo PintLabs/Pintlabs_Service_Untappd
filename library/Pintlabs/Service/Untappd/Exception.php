@@ -1,10 +1,10 @@
 <?php
 /**
  * Exception class to be thrown on error from the Untappd API
- * 
+ *
  * @see    http://untappd.com/api/dashboard
  * @author Jason Austin - http://jasonawesome.com - @jason_austin
- * 
+ *
  */
-class Awsm_Service_Untappd_Exception extends Exception
+class Pintlabs_Service_Untappd_Exception extends Exception
 {}

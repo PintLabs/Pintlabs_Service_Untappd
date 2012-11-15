@@ -1,12 +1,18 @@
-PHP library to interact with the public Untappd API version 3, patterned
+PHP library to interact with the public Untappd API version 4, patterned
 after other service libraries in Zend Framework.
 
 Information on the API can be found on Untappd's website.
 http://untappd.com/api/dashboard
 
-An API Key is required.  An Untappd username and password are required for
+A client ID and client secret is required.  An access token is required for
 certain method calls, such as myFriendFeed.  Contact Untappd to attain your
-api key.
+credentials.
+
+This library also contains 2 helper methods to generate the correct authenticate
+URI for OAuth2 authentication, as well as a method to exchange a "code" from your
+redirect URI for an access token.  Examples are below.
+
+
 
 ==============================================
 
@@ -15,14 +21,28 @@ Usage:
 
 <?php
 
-$apiKey   = 'your-api-key';
-$username = 'your-username';
-$password = 'your-password';
-        
-$untappd = new Awsm_Service_Untappd($apiKey, $username, $password);
-        
+// Setup Untappd
+$config = array(
+    'clientId'     => $clientId,
+    'clientSecret' => $clientSecret,
+    'accessToken'  => $accessToken,
+    'redirectUri'  => $redirectUri,
+);
+
+$untappd = new Pintlabs_Service_Untappd($config);
+
+
+// Example 1:  Basic method call
 try {
     $result = $untappd->myFriendFeed();
-} catch (Awsm_Service_Untappd_Exception $e) {
+} catch (Pintlabs_Service_Untappd_Exception $e) {
     die($e->getMessage());
 }
+
+
+// Example 2:  Redirecting to Untappd OAuth2 authentication URI
+header('Location: ' . $untappd->authenticateUri());
+
+
+// Example 3:  Exchanging code argument for access token
+$accessToken = $untappd->getAccessToken($_GET['code']);
