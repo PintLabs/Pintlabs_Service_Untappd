@@ -610,8 +610,14 @@ class Pintlabs_Service_Untappd
             'radius' => $radius,
             'limit'  => $limit,
         );
+        
+        if ($longitude != "" && $latitude != "") {
+          return $this->_request('thepub/local', $args);        
+        }
+        else {
+         return $this->_request('thepub', $args);
+        }
 
-        return $this->_request('thepub', $args);
     }
 
     /**
