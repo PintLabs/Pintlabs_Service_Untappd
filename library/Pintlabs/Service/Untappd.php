@@ -605,8 +605,8 @@ class Pintlabs_Service_Untappd
         $args = array(
             'since'  => $since,
             'offset' => $offset,
-            'geolng' => $longitude,
-            'geolat' => $latitude,
+            'lng' => $longitude,
+            'lat' => $latitude,
             'radius' => $radius,
             'limit'  => $limit,
         );
