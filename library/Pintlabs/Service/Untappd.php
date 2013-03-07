@@ -532,12 +532,13 @@ class Pintlabs_Service_Untappd
      * Gets all for beers of a certain brewery
      *
      * @param int $breweryId Untappd ID of the brewery
-     * @param int *optional* $since numeric ID of the latest checkin
-     * @param int *optional* $offset offset within the dataset to move to
+     * @param int *optional* $maxId The checkin ID that you want the results to start with
+     * @param int *optional* $minId The numeric ID of the most recent check-in. New results will only be shown if there are checkins before this ID
+     * @param int *optional* $limit The number of results to return, max of 50, default is 25
      *
      * @throws Pintlabs_Service_Untappd_Exception
      */
-    public function breweryFeed($breweryId, $since = '', $offset = '', $limit = '')
+    public function breweryFeed($breweryId, $maxId = '', $minId = '', $limit = '')
     {
         if (empty($breweryId)) {
             require_once 'Pintlabs/Service/Untappd/Exception.php';
@@ -545,8 +546,8 @@ class Pintlabs_Service_Untappd
         }
 
         $args = array(
-            'since'  => $since,
-            'offset' => $offset,
+            'max_id' => $maxId,
+            'min_id' => $minId,
             'limit'  => $limit,
         );
 
