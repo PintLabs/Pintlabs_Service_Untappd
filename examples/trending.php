@@ -20,12 +20,16 @@ $config = array(
 
 $untappd = new Pintlabs_Service_Untappd($config);
 
+$lng = '18.058047';
+$lat = '59.330207';
+$radius = '6';
+
 try {
-    $feed = $untappd->publicTrending();
+    $feed = $untappd->publicFeed('', '', $lng, $lat, $radius);
 } catch (Exception $e) {
     die($e->getMessage());
 }
 
-foreach ($feed->response->micro->items as $i) {
-    echo $i->beer->beer_name . ' (' . $i->total_count . ')<br />';
+foreach ($feed->response->checkins->items as $i) {
+    echo $i->user->user_name . ' checked into ' . $i->beer->beer_name . '<br />';
 }

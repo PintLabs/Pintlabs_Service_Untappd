@@ -90,6 +90,7 @@ class Pintlabs_Service_Untappd
         $this->_clientId = $connectArgs['clientId'];
         $this->_clientSecret = $connectArgs['clientSecret'];
         $this->_accessToken = (isset($connectArgs['accessToken'])) ? $connectArgs['accessToken'] : '';
+        $this->_redirectUri = (isset($connectArgs['redirectUri'])) ? $connectArgs['redirectUri'] : '';
     }
 
     /**
@@ -103,10 +104,10 @@ class Pintlabs_Service_Untappd
             'client_id'     => $this->_clientId,
             'client_secret' => $this->_clientSecret,
             'response_type' => 'code',
-            'redirect_uri'  => $this->_redirectUri,
+            'redirect_url'  => $this->_redirectUri,
         );
 
-        return 'http://untappd.com/oauth/authenticate/?' . http_build_query($args);
+        return 'https://untappd.com/oauth/authenticate/?' . http_build_query($args);
     }
 
     /**
@@ -119,15 +120,17 @@ class Pintlabs_Service_Untappd
     {
         $args = array(
             'response_type' => 'code',
-            'redirect_uri'  => $this->_redirectUri,
+            'redirect_url'  => $this->_redirectUri,
+            'client_id'     => $this->_clientId,
+            'client_secret' => $this->_clientSecret,
             'code'          => $code,
         );
 
-        $uri = 'http://untappd.com/oauth/authorize/';
+        $uri = 'https://untappd.com/oauth/authorize/';
 
         $result = $this->_request($uri, $args, false);
 
-        $this->_accessToken = $result->access_token;
+        $this->_accessToken = $result->response->access_token;
 
         return $this->_accessToken;
     }
@@ -610,9 +613,9 @@ class Pintlabs_Service_Untappd
             'radius' => $radius,
             'limit'  => $limit,
         );
-        
+
         if ($longitude != "" && $latitude != "") {
-          return $this->_request('thepub/local', $args);        
+          return $this->_request('thepub/local', $args);
         }
         else {
          return $this->_request('thepub', $args);
