@@ -288,7 +288,7 @@ class Pintlabs_Service_Untappd
      */
     public function userInfo($username = '')
     {
-        if ($username == '' && is_null($this->_upHash)) {
+        if ($username == '' && empty($this->_accessToken)) {
             require_once 'Pintlabs/Service/Untappd/Exception.php';
             throw new Pintlabs_Service_Untappd_Exception('username parameter or Untappd authentication parameters must be set.');
         }
@@ -838,13 +838,15 @@ class Pintlabs_Service_Untappd
                 require_once 'Pintlabs/Service/Untappd/Exception.php';
                 throw new Pintlabs_Service_Untappd_Exception('This method requires an access token');
             }
-
-            $args['access_token'] = $this->_accessToken;
         }
 
-        // Append the API key to the args passed in the query string
-        $args['client_id'] = $this->_clientId;
-        $args['client_secret'] = $this->_clientSecret;
+        if (!empty($this->_accessToken)) {            
+            $args['access_token'] = $this->_accessToken;
+        } else {
+            // Append the API key to the args passed in the query string
+            $args['client_id'] = $this->_clientId;
+            $args['client_secret'] = $this->_clientSecret;
+        }
 
         // remove any unnecessary args from the query string
         foreach ($args as $key => $a) {
@@ -881,17 +883,23 @@ class Pintlabs_Service_Untappd
         // Response comes back as JSON, so we decode it into a stdClass object
         $this->_lastParsedResponse = json_decode($this->_lastRawResponse);
 
+            
         // If the http_code var is not found, the response from the server was unparsable
-        if (!isset($this->_lastParsedResponse->meta->code)) {
+        if (!isset($this->_lastParsedResponse->meta->code) && !isset($this->_lastParsedResponse->meta->http_code)) {
             require_once 'Pintlabs/Service/Untappd/Exception.php';
             throw new Pintlabs_Service_Untappd_Exception('Error parsing response from server.');
         }
 
+        $code = (isset($this->_lastParsedResponse->meta->http_code)) ? $this->_lastParsedResponse->meta->http_code : $this->_lastParsedResponse->meta->code;
+                            
         // Server provides error messages in http_code and error vars.  If not 200, we have an error.
-        if ($this->_lastParsedResponse->meta->code != '200') {
+        if ($code != '200') {
             require_once 'Pintlabs/Service/Untappd/Exception.php';
+                        
+            $errorMessage = (isset($this->_lastParsedResponse->meta->error_detail)) ? $this->_lastParsedResponse->meta->error_detail : $this->_lastParsedResponse->meta->error;            
+        
             throw new Pintlabs_Service_Untappd_Exception('Untappd Service Error ' .
-                $this->_lastParsedResponse->meta->code . ': ' .  $this->_lastParsedResponse->meta->error);
+                $code . ': ' .  $errorMessage);
         }
 
         return $this->getLastParsedResponse();

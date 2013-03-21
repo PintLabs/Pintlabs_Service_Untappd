@@ -7,8 +7,7 @@
  *
  */
 
-
-set_include_path(get_include_path() . PATH_SEPARATOR . '../library/');
+set_include_path(get_include_path() . PATH_SEPARATOR . '../../library/');
 
 require_once 'Pintlabs/Service/Untappd.php';
 
@@ -29,9 +28,12 @@ $untappd = new Pintlabs_Service_Untappd($config);
  */
 $accessToken = $untappd->getAccessToken($_GET['code']);
 
-$authorizedUser = $untappd->userInfo();
-
 /**
  * Store the $accessToken in your db for user with the user who authorized you,
  * which you know by calling the userInfo() method with no params.
  */
+
+
+$authorizedUser = $untappd->userInfo();
+
+var_dump($authorizedUser);
