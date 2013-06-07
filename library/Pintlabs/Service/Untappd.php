@@ -221,7 +221,7 @@ class Pintlabs_Service_Untappd
 
         $args = array();
 
-        return $this->_request('friend/accept/' . $requestingUserId, $args, true);
+        return $this->_sendPost('friend/accept/' . $requestingUserId, $args, true);
     }
 
     /**
@@ -240,7 +240,7 @@ class Pintlabs_Service_Untappd
 
         $args = array();
 
-        return $this->_request('friend/reject/' . $requestingUserId, $args, true);
+        return $this->_sendPost('friend/reject/' . $requestingUserId, $args, true);
     }
 
     /**
@@ -727,10 +727,10 @@ class Pintlabs_Service_Untappd
             'facebook'      => ($facebook) ? 'on' : 'off',
             'twitter'       => ($twitter) ? 'on' : 'off',
             'foursquare'    => ($foursquare) ? 'on' : 'off',
-            'rating_value'  => $rating
+            'rating'  => $rating
         );
 
-        return $this->_request('checkin/add', $args, true);
+        return $this->_sendPost('checkin/add', $args, true);
     }
 
     /**
@@ -757,7 +757,7 @@ class Pintlabs_Service_Untappd
             'comment' => $comment,
         );
 
-        return $this->_request('checkin/addcomment/' . $checkinId, $args, true);
+        return $this->_sendPost('checkin/addcomment/' . $checkinId, $args, true);
     }
 
     /**
@@ -776,7 +776,7 @@ class Pintlabs_Service_Untappd
 
         $args = array();
 
-        return $this->_request('checkin/deletecomment/' . $commentId, $args, true);
+        return $this->_sendPost('checkin/deletecomment/' . $commentId, $args, true);
     }
 
     /**
@@ -816,6 +816,97 @@ class Pintlabs_Service_Untappd
 
         return $this->_request('checkin/toast/' . $checkinId, $args, true);
     }
+    /**
+	 * Sends a POST using curl to the required URI
+	 *
+	 *  @param string $method Untappd method to call
+	 *  @param array $args key value array or arguments
+	 *
+	 * @throws Pintlabs_Service_Untappd_Exception
+	 *
+	 *
+	 * @return stdClass object
+	 */
+	     protected function _sendPost($method, $args, $requireAuth = false)
+    {
+        $this->_lastRequestUri = null;
+        $this->_lastRawResponse = null;
+        $this->_lastParsedResponse = null;
+
+        if ($requireAuth) {
+            if (empty($this->_accessToken)) {
+                require_once 'Pintlabs/Service/Untappd/Exception.php';
+                throw new Pintlabs_Service_Untappd_Exception('This method requires an access token');
+            }
+        }
+
+        if (!empty($this->_accessToken)) {            
+            $access_token = $this->_accessToken;
+        } else {
+            // Append the API key to the args passed in the query string
+            $client_id = $this->_clientId;
+            $client_secret = $this->_clientSecret;
+        }
+
+        // remove any unnecessary args from the query string
+        foreach ($args as $key => $a) {
+            if ($a == '') {
+                unset($args[$key]);
+            }
+        }
+
+        //if (preg_match('/^http/i', $method)) {
+          //  $this->_lastRequestUri = $method;
+        //} else {
+            $this->_lastRequestUri = self::URI_BASE . '/' . $method;
+        //}
+
+        $this->_lastRequestUri .= '?access_token=' . $access_token;
+		$postfields = http_build_query($args);
+        // Set curl options and execute the request
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->_lastRequestUri);
+        curl_setopt($ch, CURLOPT_POST, count($args));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $this->_lastRawResponse = curl_exec($ch);
+
+        if ($this->_lastRawResponse === false) {
+
+            $this->_lastRawResponse = curl_error($ch);
+            require_once 'Pintlabs/Service/Untappd/Exception.php';
+            throw new Pintlabs_Service_Untappd_Exception('CURL Error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        // Response comes back as JSON, so we decode it into a stdClass object
+        $this->_lastParsedResponse = json_decode($this->_lastRawResponse);
+
+            
+        // If the http_code var is not found, the response from the server was unparsable
+        if (!isset($this->_lastParsedResponse->meta->code) && !isset($this->_lastParsedResponse->meta->http_code)) {
+            require_once 'Pintlabs/Service/Untappd/Exception.php';
+            throw new Pintlabs_Service_Untappd_Exception('Error parsing response from server.');
+        }
+
+        $code = (isset($this->_lastParsedResponse->meta->http_code)) ? $this->_lastParsedResponse->meta->http_code : $this->_lastParsedResponse->meta->code;
+                            
+        // Server provides error messages in http_code and error vars.  If not 200, we have an error.
+        if ($code != '200') {
+            require_once 'Pintlabs/Service/Untappd/Exception.php';
+                        
+            $errorMessage = (isset($this->_lastParsedResponse->meta->error_detail)) ? $this->_lastParsedResponse->meta->error_detail : $this->_lastParsedResponse->meta->error;            
+        
+            throw new Pintlabs_Service_Untappd_Exception('Untappd Service Error ' .
+                $code . ': ' .  $errorMessage);
+        }
+
+        return $this->getLastParsedResponse();
+    }
+
 
     /**
      * Sends a request using curl to the required URI
