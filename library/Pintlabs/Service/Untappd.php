@@ -595,6 +595,25 @@ class Pintlabs_Service_Untappd
     }
 
     /**
+     * Searches for an Untappd venue ID based on a FourSquare venue ID.
+     *
+     * @param string $searchString FourSquare venue id
+     *
+     * @throws Pintlabs_Service_Untappd_Exception
+     */
+    public function foursquareVenueLookup($venueID)
+    {
+        if (empty($venueID)) {
+            require_once 'Pintlabs/Service/Untappd/Exception.php';
+            throw new Pintlabs_Service_Untappd_Exception('venueID parameter must be set and not empty');
+        }
+
+        $args = array();
+
+        return $this->_request('venue/foursquare_lookup/'. $venueID, $args);
+    }
+
+    /**
      * Gets the public feed of checkings, also known as "the pub"
      *
      *@ param int *optional* $since numeric ID of the latest checkin
