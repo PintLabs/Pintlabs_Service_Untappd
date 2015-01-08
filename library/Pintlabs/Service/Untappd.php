@@ -13,7 +13,7 @@ class Pintlabs_Service_Untappd
      *
      * @var string
      */
-    const URI_BASE = 'http://api.untappd.com/v4';
+    const URI_BASE = 'https://api.untappd.com/v4';
 
     /**
      * Client ID
