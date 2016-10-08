@@ -12,10 +12,42 @@ This library also contains 2 helper methods to generate the correct authenticate
 URI for OAuth2 authentication, as well as a method to exchange a "code" from your
 redirect URI for an access token.  Examples are below.
 
-
-
 ==============================================
 
+Installation:
+
+Using composer:
+
+Add the repository to your composer.json file
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/PintLabs/Pintlabs_Service_Untappd.git"
+        }
+    ],
+
+Add the library to your requirements list:
+
+    "require": {
+        "php": ">=5.5.9",
+        "laravel/framework": "5.2.*",
+        "fabpot/goutte": "^3.1",
+        "PintLabs/Pintlabs_Service_Untappd": "*@dev"
+    },
+
+Add the Untappd dir to your autoload list:
+
+    "autoload": {
+        "classmap": [
+            "vendor/Pintlabs/Pintlabs_Service_Untappd/library/Pintlabs/Service/"
+        ],
+    }
+
+
+Run `composer update`
+
+==============================================
 
 Usage:
 
